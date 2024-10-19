@@ -27,6 +27,10 @@ int main()
     server_addr.sin_addr.s_addr = INADDR_ANY; // Bind to any available network interface
     server_addr.sin_port = htons(PORT);       // Port number
 
+    //print the server address
+    std::cout << "Server address: " << inet_ntoa(server_addr.sin_addr) << std::endl;
+    
+
     // Bind the socket with the server address
     if (bind(sockfd, (const struct sockaddr *)&server_addr, sizeof(server_addr)) < 0)
     {

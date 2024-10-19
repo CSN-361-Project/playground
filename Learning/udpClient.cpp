@@ -4,7 +4,7 @@
 #include <unistd.h>    // For close
 
 #define PORT 12345
-#define SERVER_IP "127.0.0.1" // Localhost IP
+#define SERVER_IP "0.0.0.0" // Localhost IP
 
 int main()
 {
