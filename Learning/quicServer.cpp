@@ -16,9 +16,7 @@ int main(int argc, char const *argv[])
     QUICSocket quiicSocket;
     quiicSocket.createSocket();
     
-
     quiicSocket.bindSocket(server_addr);
-
     
     quiicSocket.listenSocket();
     std::cout << "Server is up and listening..." << std::endl;

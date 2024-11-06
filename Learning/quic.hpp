@@ -25,8 +25,6 @@ public:
     struct sockaddr_in peer_addr;
     int connectionStatus;
 
-    QUICConnection();
-    ~QUICConnection();
 };
 
 class QUICSocket
@@ -36,11 +34,7 @@ private:
 
 public:
     int socketfd;
-    QUICSocket(/* args */)
-    {
-    }
-    ~QUICSocket();
-
+    
     // client and server
     int createSocket()
     { // output resports error
@@ -53,20 +47,7 @@ public:
     }
 
     // client only
-    QUICConnection connectSocket(const struct sockaddr_in &server_addr)
-    {
-        QUICConnection connection;
-        if (connect(socketfd, (const struct sockaddr *)&server_addr, sizeof(server_addr)) < 0)
-        {
-            connection.connectionStatus = CONNECTION_REJECTED_ByUDP;
-            return connection;
-        }
-        connection.connectionfd = socketfd;
-        connection.peer_addr = server_addr;
-        connection.connectionStatus = CONNECTION_ACCEPTED_ByUDP;
-        return connection;
-    }
-
+    
     // server only
     int bindSocket(const struct sockaddr_in &server_addr)
     {
@@ -84,37 +65,9 @@ public:
     }
 
     // server only
-    int listenSocket()
-    {
-        if (listen(socketfd, 10) != 0)
-        {
-            perror("listen()");
-            exit(1);
-        }
-        return 0;
-    }
+    
 
-    // server only
-    QUICConnection acceptSocket()
-    {
-        struct sockaddr_in client_addr;
-        socklen_t len = sizeof(client_addr);
 
-        int clientfd = accept(socketfd, (struct sockaddr *)&client_addr, &len);
-        // Setting Up Connection Object
-        QUICConnection connection;
-
-        if (clientfd < 0)
-        {
-            perror("accept()");
-            connection.connectionStatus = CONNECTION_REJECTED_ByUDP;
-            return connection;
-        }
-        connection.connectionStatus = CONNECTION_ACCEPTED_ByUDP;
-        connection.peer_addr = client_addr;
-        connection.connectionfd = clientfd;
-        return connection;
-    }
 };
 
 #endif // QUIC_H

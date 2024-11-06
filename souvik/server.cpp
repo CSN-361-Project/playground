@@ -125,28 +125,28 @@ int main()
 
     std::cout << "Listening for client\n";
 
-    if ((n = recvfrom(sockfd, (char *)buffer, MAXLINE,
-                      MSG_WAITALL, (struct sockaddr *)&cliaddr,
-                      &len)) < 0)
-    {
-        perror("receive failed");
-        exit(EXIT_FAILURE);
-    }
+    // if ((n = recvfrom(sockfd, (char *)buffer, MAXLINE,
+    //                   MSG_WAITALL, (struct sockaddr *)&cliaddr,
+    //                   &len)) < 0)
+    // {
+    //     perror("receive failed");
+    //     exit(EXIT_FAILURE);
+    // }
 
-    buffer[n] = '\0';
+    // buffer[n] = '\0';
 
-    // // Print the raw data received
-    //         std::cout
-    //     << "Received " << n << " bytes from client: ";
+    // Print the raw data received
+        //     std::cout
+        // << "Received " << n << " bytes from client: ";
     // for (int i = 0; i < n; ++i)
     // {
     //     std::cout << std::hex << (int)buffer[i] << " ";
     // }
     // std::cout << std::dec << std::endl; // Switch back to decimal
 
-    printf("Client : %s\n", buffer);
+    // printf("Client : %s\n", buffer);
 
-    // // Write the raw buffer to a file
+    // Write the raw buffer to a file
     // std::ofstream outFile("message.txt", std::ios::binary);
     // if (outFile.is_open())
     // {
