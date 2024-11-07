@@ -1,7 +1,3 @@
-#ifndef INCLUDES_HPP
-#define INCLUDES_HPP
-
-
 #include <iostream>
 #include <vector>
 #include <string>
@@ -17,19 +13,25 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include <sys/ioctl.h>
-#include <net/if.h>
 
-#include "packet.hpp"
-#include "statusCode.hpp"
-#include "frame.hpp"
-#include "packet.hpp"
-#include "quicServer.hpp"
-#include "quicClient.hpp"
-
+using namespace std;
 
 #define PORT 12345
-#define SERVER_IP 
+
+class 
 
 
-#endif // INCLUDES_HPP
+
+int main(){
+    // We will be creating a server for quic and then transform it in form of functions that can be used as API
+
+
+
+    // Server setup [ Certificates, Keys, etc. ]
+
+
+
+
+
+
+}

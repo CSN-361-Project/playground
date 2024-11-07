@@ -1,69 +1,90 @@
 #ifndef QUICSERVER_HPP
 #define QUICSERVER_HPP
 
-#include <iostream>
-#include <vector>
-#include <string>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <unistd.h>
-#include <string>
-#include <stdlib.h>
-#include "./statusCode.hpp"
-
-
-
+#include "includes.hpp"
 
 class quicServer{
-    private:
+    public:
         int sockfd;
 
         // This server details set by the user
-        struct sockaddr_in servaddr;
+        struct sockaddr_in server_addr;
         int server_port;
-        string server_ip;
+        std::string server_ip;
 
         // Managing status and error logs
         statusCode serverStatus;
         errorLog serverErrorLog;
-    
+        bool isServerRunning;
+
+        // Recieving packets
+        PACKET_LINKEDLIST *packetList;
+        /*
+        Remark when you get a dataout of packetlists, it only deletes the node and not the data's memory | you need to explicitly delete the data using deconstructor
+
+        And when using delete PACKET_LINKEDLIST, it will delete all the packets in the list and also clear the memory of packetdata
+        */
+
     public:
         quicServer(){
-            serverStatus = SERVER_SOCKET_CREATION_INITIATED;
+            isServerRunning = false;
+
+            // -- TO DO [Other things]    
+
+
+            serverStatus = SERVER_CREATE_SUCCESS;
+        }
+
+        // the moment server is binded it start listening []
+
+        int OpenListener(const struct sockaddr *addr, socklen_t addrlen){
 
             // Creating socket file descriptor
             if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
             {
-                serverStatus = SERVER_UDP_SOCKET_CREATION_FAILED;
-                serverErrorLog = "Socket creation failed";
+                serverStatus = SERVER_LISTENER_OPEN_FAILED;
+                serverErrorLog = "UDP Socket creation failed";
                 return;
             }
 
-            serverStatus = SERVER_SOCKET_CREATION_SUCCESS;
-        }
-
-        int bind(const struct sockaddr *addr, socklen_t addrlen){
-            serverStatus = SERVER_UDP_SOCKET_BIND_INITIATED;
             // Bind the socket with the server address
             if (::bind(sockfd, addr, addrlen) < 0)
             {
-                serverStatus = SERVER_UDP_SOCKET_BIND_FAILED;
-                serverErrorLog = "Bind failed";
+                serverStatus = SERVER_LISTENER_OPEN_FAILED;
+                serverErrorLog = "UDP Bind failed";
                 return -1;
             }
 
-            serverStatus = SERVER_UDP_SOCKET_BIND_SUCCESS;
+            
+
+            // here we would need to make a thread that would keep getting packets on the port but discard them since we are not listening yet
+
+            // ------_Listening Thread Call_------
+
+            serverStatus = SERVER_LISTENER_READY;
             return 0;
         }
 
-        int listen(){
+        int StartListener(){
+            isServerRunning = true;
+            serverStatus = SERVER_LISTENING;
+            return 0;
+        }
+
+        int StopListener(){
+            isServerRunning = false;
+            serverStatus = SERVER_LISTENER_READY;
+            return 0;
+        }
+
+        int CloseListener(){
             // ---TO DO---
         }
 
-        int accept(){
-            // ---TO DO---
-        }
+        // Will implement accept in CallBack Handler Style
+        // int accept(){
+        //     // ---TO DO---
+        // }
 };
 
 #endif // QUICSERVER_HPP

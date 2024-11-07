@@ -32,6 +32,9 @@ int main(){
     servaddr.sin_family = AF_INET; // IPv4
     servaddr.sin_addr.s_addr = INADDR_ANY;
     servaddr.sin_port = htons(PORT);
+    printf("Server Socket created on \n");
+    sleep(10);
+
 
     // Bind the socket with the server address
     if (bind(sockfd, (const struct sockaddr *)&servaddr,sizeof(servaddr)) < 0)
@@ -39,6 +42,8 @@ int main(){
         perror("bind failed");
         exit(EXIT_FAILURE);
     }
+    printf("Server Socket binded on port %d\n", PORT);
+    sleep(10);
 
     socklen_t len, n;
 

@@ -1,14 +1,7 @@
 #ifndef CLIENTSOCKET_HPP
 #define CLIENTSOCKET_HPP
 
-#include <iostream>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <unistd.h>
-#include <string>
-#include <stdlib.h>
-#include "./statusCode.hpp"
+#include "includes.hpp"
 
 using namespace std;
 
