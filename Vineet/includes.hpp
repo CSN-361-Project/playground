@@ -26,6 +26,8 @@
 #include "packet.hpp"
 #include "quicServer.hpp"
 #include "quicClient.hpp"
+#include "connection.hpp"
+#include "connectionID.hpp"
 
 
 #define PORT 12345

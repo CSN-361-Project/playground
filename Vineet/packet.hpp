@@ -3,6 +3,8 @@
 
 #include "includes.hpp"
 
+int MAX_CONNECTION_ID_SIZE = 8; // 8 bytes = 64 bits
+
 /*
 Some Restrictions
 
@@ -10,7 +12,6 @@ Some Restrictions
 
 */
 
-const unsigned int CONNECTION_ID_LENGTH = 2;
 
 enum packetType
 {
@@ -21,6 +22,8 @@ enum packetType
     OneRTT,
     Invalid
 };
+
+
 class packet
 {
 public:
@@ -30,13 +33,21 @@ public:
 
 
     // Declarations ----------------------------
+    packet(); // Just a default constructor
     packet(const char *buffer, const int size_of_data);
     ~packet();
-    packetType getPacketType();
+    const packetType getPacketType();
+    const CONNECTION_ID getDestinationConnectionID();
 
 
 
     // Implementations ----------------------------
+    packet(){
+        data = NULL;
+        size = 0;
+        type = Invalid;
+    }
+
     packet(const char *buffer, const int size_of_data)
     {
         char *data = (char *)malloc(size_of_data + 1);
@@ -71,12 +82,39 @@ public:
         free(data);
     }
 
-    packetType getPacketType()
+    const packetType getPacketType()
     {
         return type;
     }
 
+    const CONNECTION_ID getDestinationConnectionID()
+    {
+        CONNECTION_ID connectionID = 0;
+        // we need to read from byte 1 to (1+byteSizeOfConnectionID-1)
+        int start;
+        int end;
+        u_int x=0;
+        if (type == OneRTT)
+        {
+            start = 1;
+            end = 1 + byteSizeOfConnectionID - 1;
+        }
+        else if(type!=Invalid){
+            int bytesSizeAsPerSender = data[5];
+            // if it's not of our size means it's a new connection by default [ ]
+            start = 6;
+            end = 6 + bytesSizeAsPerSender - 1;
+        }
 
+        for (int i = start; i <= end; i++)
+        {
+            x = x << 8;
+            x = x | data[i];
+        }
+        connectionID = x;
+        return connectionID;
+    }
+    
 
 
     // ---Info-------------------------
