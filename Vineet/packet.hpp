@@ -3,14 +3,6 @@
 
 #include "includes.hpp"
 
-int MAX_CONNECTION_ID_SIZE = 8; // 8 bytes = 64 bits
-
-/*
-Some Restrictions
-
-1. We are chosing our Connection ID of Fixed Lenght of 16bits - 2 bytes
-
-*/
 
 
 enum packetType

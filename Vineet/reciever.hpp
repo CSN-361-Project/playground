@@ -5,13 +5,10 @@
 
 // Declarations ----------------------------
 void* RecieverThread(void* arg);
-// void ForwardRecievedPacket(quicServer *server, packet* packetData);
 
 
 
 // Implementations ----------------------------
-
-
 void* RecieverThread(void* arg){
     quicServer *server = (quicServer *)arg; // we pass the whole server object over to the thread to have full access to this
 

@@ -3,7 +3,6 @@
 
 #include "includes.hpp"
 
-#define MAXLINE 1024
 
 class clientSocket{
     private:

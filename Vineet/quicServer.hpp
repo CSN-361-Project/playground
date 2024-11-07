@@ -3,19 +3,6 @@
 
 #include "includes.hpp"
 
-// Global variable
-int byteSizeOfConnectionID = 2; // will be re-set by serverCreationConstructor
-
-// Forward Class Declaration
-class quicServer;
-class quicConnection;
-class connectionIDManager;
-class quicConnectionNode;
-class QUIC_CONNECTION_LINKED_LIST;
-
-
-
-
 class quicServer{
     public:
 
