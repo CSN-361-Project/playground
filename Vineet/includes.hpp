@@ -28,6 +28,15 @@
     #include "quicClient.hpp"
     #include "connection.hpp"
     #include "connectionID.hpp"
+    #include "linkedList.hpp"
+    #include "reciever.hpp"
+    #include "sender.hpp"
+    #include "connectionNew.hpp"
+    #include "connectionExisting.hpp"
+    #include "processingFunction.hpp"
+    #include "packetProcessing.hpp"
+    #include "frameProcessing.hpp"
+
 
 // #defines
     #define PORT 12345
@@ -38,9 +47,18 @@
     using CONNECTION_ID = u_int64_t; // set it to max 8bytes
     using STATUS_CODE = int;
     using ERROR_LOG = std::string;
+    using PACKET_LINKEDLIST = LinkedList<packet>;
+    using FRAME_LINKED_LIST = LinkedList<frame>;
+    using varInt = u_int64_t;
+    using ull = unsigned long long;
+    using Byte8 = unsigned long long;
+    using Byte4 = unsigned int;
+    using Byte2 = unsigned short;
+    using Byte1 = unsigned char;
+    using index = unsigned int;
+    using length = unsigned long long;
 
-
-// Global Constants
+    // Global Constants
     int MAX_CONNECTION_ID_SIZE = 8; // 8 bytes = 64 bits
     int MAXLINE = 1024; // 1 KB
 

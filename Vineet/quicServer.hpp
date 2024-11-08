@@ -23,23 +23,24 @@ class quicServer{
 
         // New Connections
         void* NewConnectionCallbackHandler; // This will be called when a new connection is established
-        PACKET_LINKEDLIST newConnectionPackets;
+        PACKET_LINKEDLIST ConnectionRequestPackets; // Packets for new connections
 
         //Registered Connection 
-        QUIC_CONNECTION_LINKED_LIST ConnectionsList;
-        connectionIDManager connectionIDs;
+        QUIC_CONNECTION_LINKED_LIST ConnectionsList; // List of all the connections
+        connectionIDManager connectionIDs; // Connection ID Manager
 
-        // Recieving packets
+        // Packets to be sent
+        PACKET_LINKEDLIST packetsToSend; // Packets to be sent to the [repective] client
 
-        PACKET_LINKEDLIST packetsToSend;
-
+        // Deamon Threads
+        pthread_t ListenerThread;
+        pthread_t SenderThread;
         
-        
+
         /*
         Remark when you get a dataout of packetlists, it only deletes the node and not the data's memory | you need to explicitly delete the data using deconstructor
         And when using delete PACKET_LINKEDLIST, it will delete all the packets in the list and also clear the memory of packetdata
         */
-        
 
 
         // ------- Member Function Declarations ------------
@@ -49,9 +50,7 @@ class quicServer{
         int StopListener();
         int CloseListener();
         void setNewConnectionCallbackHandler(void* callbackHandler);
-
-
-
+        quicConnection acceptConnection(); // Implemented in NewConnections.hpp file
 
 
         // ------- Member Function Implementations ------------
@@ -64,7 +63,7 @@ class quicServer{
             // server_ip = SERVER_IP;
             connectionIDs = connectionIDManager();
             ConnectionsList = QUIC_CONNECTION_LINKED_LIST();
-            newConnectionPackets = PACKET_LINKEDLIST();
+            ConnectionRequestPackets = PACKET_LINKEDLIST();
             packetsToSend = PACKET_LINKEDLIST();
 
 
@@ -126,10 +125,7 @@ class quicServer{
             NewConnectionCallbackHandler = callbackHandler;
         }
 
-        // Will implement accept in CallBack Handler Style
-        int accept();
-        //     // ---TO DO---
-        // }
+        // int acceptConnection() | In NewConnections.hpp
 };
 
 

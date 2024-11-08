@@ -3,6 +3,13 @@
 
 #include "includes.hpp"
 
+//Forward Declaration
+class quicConnectionNode;
+
+
+// const quicConnection FAILED_CONNECTION = quicConnection();
+
+
 class quicConnection
 {
     // This is a class that will be used to handle the connection between the server and the client
@@ -13,15 +20,26 @@ public:
     STATUS_CODE status;
 
     // PACKETS
-    PACKET_LINKEDLIST *RecievedPackets;
-    PACKET_LINKEDLIST *SendPackets;
+    PACKET_LINKEDLIST RecievedPackets;
+    PACKET_LINKEDLIST SendPackets;
 
+    // peer details [-- will be using for sending packets back to the peer]
+    SocketAddress peerAddress;
 
     // Member Function Declarations ----------------
-    quicConnection();
+    quicConnection(packet* InitialPacket);
+
+
 
     // Member Function Implementations ----------------
-
+    quicConnection(packet* InitialPacket)
+    {
+        // Extract the peer address from the packet
+        peerAddress = InitialPacket->peerAddress;
+        
+        // Then we need to process the Initial Packet
+        int check = processInitialPacket(this,InitialPacket);
+    }
 };
 
 // Linked List for Connections

@@ -15,6 +15,11 @@ enum packetType
     Invalid
 };
 
+struct SocketAddress
+{
+    sockaddr_in address;
+    socklen_t len;
+};
 
 class packet
 {
@@ -22,11 +27,11 @@ public:
     char *data;
     int size;
     packetType type;
-
+    SocketAddress peerAddress;
 
     // Declarations ----------------------------
     packet(); // Just a default constructor
-    packet(const char *buffer, const int size_of_data);
+    packet(const char *buffer, const int size_of_data, SocketAddress senderAddress);
     ~packet();
     const packetType getPacketType();
     const CONNECTION_ID getDestinationConnectionID();
@@ -38,14 +43,19 @@ public:
         data = NULL;
         size = 0;
         type = Invalid;
+
     }
 
-    packet(const char *buffer, const int size_of_data)
+    packet(const char *buffer, const int size_of_data, SocketAddress senderAddress)
     {
         char *data = (char *)malloc(size_of_data + 1);
         // use memcpy to copy the buffer to data
         memcpy(data, buffer, size_of_data);
         data[size_of_data] = '\0'; // null terminate the string
+
+        // Set address [ we need to create a copy of it ]
+        peerAddress.address = senderAddress.address;
+        peerAddress.len = senderAddress.len;
 
         type = Invalid;
         // set packet type
@@ -158,113 +168,6 @@ public:
 
 };
 
-
-
-class packetNode{
-    public:
-        packet *packetData;
-        packetNode *next;
-        packetNode(packet *packetData){
-            this->packetData = packetData;
-            this->next = NULL;
-        }
-
-        ~packetNode(){
-            delete packetData;
-        }
-};
-
-class PACKET_LINKEDLIST{
-    public:
-        packetNode *head;
-        packetNode *tail;
-        int size; // will be used for Producer-Consumer Approach
-        PACKET_LINKEDLIST(){
-            head = NULL;
-            tail = NULL;
-            size = 0;
-        }
-
-        // Declarations of functions -------------------
-        void addPacket(packet *packetData); // at tail
-        void addPacketAtTail(packet *packetData);
-        void addPacketAtHead(packet *packetData);
-        packet *peekHead(); // don't remove node
-        packet *extractHead(); // also remove ndoe
-        packet *peekTail();
-        packet *extractTail();
-        ~PACKET_LINKEDLIST(); // called using 'delete' keyword
-
-
-
-        // Implementations of functions -------------------
-        void addPacket(packet *packetData){
-            addPacketAtTail(packetData);
-        }
-
-        void addPacketAtTail(packet *packetData){
-            packetNode *newNode = new packetNode(packetData);
-            if(head == NULL){
-                head = newNode;
-                tail = newNode;
-            }else{
-                tail->next = newNode;
-                tail = newNode;
-            }
-            size++;
-        }
-
-        void addPacketAtHead(packet *packetData){
-            packetNode *newNode = new packetNode(packetData);
-            if(head == NULL){
-                head = newNode;
-                tail = newNode;
-            }else{
-                newNode->next = head;
-                head = newNode;
-            }
-            size++;
-        }
-
-        packet *peekHead(){ 
-            return head->packetData;
-        }
-
-        packet *extractHead(){ 
-            packet *packetData = head->packetData;
-            packetNode *temp = head;
-            head = head->next;
-            delete temp;
-            size--;
-            return packetData; // Remember we are not deleting the packetData, we are just removing the node
-        }
-
-        packet *peekTail(){ 
-            return tail->packetData;
-        }
-
-        packet *extractTail(){ 
-            packet *packetData = tail->packetData;
-            packetNode *temp = head;
-            while(temp->next != tail){
-                temp = temp->next;
-            }
-            delete tail;
-            tail = temp;
-            size--;
-            return packetData; // Remember we are not deleting the packetData, we are just removing the node
-        }
-
-        ~PACKET_LINKEDLIST(){ 
-            while(head != NULL){
-                packetNode *temp = head;
-                head = head->next;
-                free(temp->packetData); // Deleting the packetData
-                delete temp; //deleting the node
-            }
-        }
-
-};
 
 
 #endif // PACKET_H

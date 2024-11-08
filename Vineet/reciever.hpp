@@ -16,26 +16,26 @@ void* RecieverThread(void* arg){
 
         // Recieve the packet
         char buffer[MAXLINE];
-        socklen_t len;
-        sockaddr sender_addr;
-        int bytes_read = recvfrom(server->sockfd, (char *)buffer, MAXLINE,MSG_WAITALL, (struct sockaddr *)&sender_addr,&len);
+        SocketAddress sender_addr;
+        int bytes_read = recvfrom(server->sockfd, (char *)buffer, MAXLINE,MSG_WAITALL, (struct sockaddr *)&sender_addr.address,&sender_addr.len);
         buffer[bytes_read] = '\0';
         
-        // ----TODO----- we need to make sure data is in Network -> Host Byte Order
-
 
         if(server->isServerListening){
             // Add the packet to the packetList
             // -- TODO -- Mutual Access to the packetList competing with the PacketProcessingThread
-            packet *packetRecieved = new packet(buffer, bytes_read);
+            packet *packetRecieved = new packet(buffer, bytes_read, sender_addr);
 
             // server->recievedPackets->addPacket(packetData);
 
+            // ---------ERROR [Initail Packets may also belong to a existing connection]
+            // ----TODO Decide on a method to distinguish between the two
+            
             if(packetRecieved->getPacketType() == Initial){
                 // Forward the packet to the newConnectionPackets
-                server->newConnectionPackets.addPacket(packetRecieved);
+                server->ConnectionRequestPackets.addNode(packetRecieved);
 
-                // --TODO== Some Signal Method to notify callback handler
+                // --------TODO== Some Signal Method to notify callback handler
 
             }else{
                 // check Connection ID and forward the packet to the respective connection
@@ -43,7 +43,7 @@ void* RecieverThread(void* arg){
 
                 if(WhichConnection != NULL){
                     // Forward the packet to the connection
-                    WhichConnection->RecievedPackets->addPacket(packetRecieved);
+                    WhichConnection->RecievedPackets.addNode(packetRecieved);
                 }
                 // else{
                     // Discard the packet
