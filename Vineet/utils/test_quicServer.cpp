@@ -26,6 +26,10 @@ int main(){
     server.StartListener();
 
     sleep(10); // wait for 10sec; 
+
+    server.StopListener();
+    server.CloseListener();
+    
 }
 
 void NewConnectionHandler(quicServer *server){

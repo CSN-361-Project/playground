@@ -201,9 +201,18 @@ public:
     int receive(char *data)
     {
         // must be blocking in Nature 
-        // ---------TO DO-----------
-        std::cout << "LineNo- " <<__LINE__ << " | Not Implemented | " << std::endl;
-        return dequeueRecieveData(data);
+        // Bruteforce Implementation of Blocking Call
+        char *temp = new char[1024];
+        int length = dequeueRecieveData(temp);
+        while(length == 0){
+            length = dequeueRecieveData(temp); // blocking call
+        }
+        data = (char *)realloc(data, length);
+        for (int i = 0; i < length; i++)
+        {
+            data[i] = temp[i];
+        }
+        return length;
     }
 
     quicStream(STREAM_ID id)
