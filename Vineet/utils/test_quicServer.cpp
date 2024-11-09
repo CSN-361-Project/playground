@@ -54,9 +54,21 @@ void NewStreamHandler(quicStream *newStream){
     char* defaultResponse = "I don't understand";
 
     if(strcmp(clientRequest, request1) == 0){
+        // Print the request
+        std::cout << "Request : " << clientRequest << std::endl;
+
+        // Print the response
+        std::cout << "Response : " << response1 << std::endl;
+        std::cout << "----------------" << std::endl;
         newStream->send(response1, strlen(response1));
     }
     else{
+        // Print the request
+        std::cout << "Request : " << clientRequest << std::endl;
+
+        // Print the response
+        std::cout << "Response : " << defaultResponse << std::endl;
+        std::cout << "----------------" << std::endl;
         newStream->send(defaultResponse, strlen(defaultResponse));
     }
 }
