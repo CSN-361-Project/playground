@@ -42,7 +42,6 @@ void NewStreamHandler(quicStream *newStream){
     // This function will be called when a new stream is established
     // Here is the API Code where server will handle it's requests
 
-    // ----TODO---- [Will see how to implement this]
     int bufferlen = 1024;
     char* clientRequest = new char[bufferlen];
     int length = newStream->receive(clientRequest);

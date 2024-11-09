@@ -4,7 +4,7 @@
 #define LOCALHOST INADDR_ANY
 
 int main(){
-
+    
     // Client Code
     quicClient client = quicClient();
 
@@ -28,5 +28,5 @@ int main(){
 
     // Print the response
     std::cout << "Response : " << response << std::endl;
-    
+
 }
