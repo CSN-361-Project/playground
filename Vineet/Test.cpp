@@ -2,5 +2,5 @@
 
 int main(){
 
-    char x = 0
+    char x = 0;
 }

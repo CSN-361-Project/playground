@@ -21,21 +21,31 @@ class quicServer{
         bool isServerListening; // Packets will be recieved or not
         bool isListernerOpen; // ListenerThread will be running or NOT(will be joined to main thread)
 
-        // New Connections
+        // New Connections Requests
         void* NewConnectionCallbackHandler; // This will be called when a new connection is established
         PACKET_LINKEDLIST ConnectionRequestPackets; // Packets for new connections
 
-        //Registered Connection 
-        QUIC_CONNECTION_LINKED_LIST ConnectionsList; // List of all the connections
+        // HandshakePhase Connections
+        QUIC_CONNECTION_LINKED_LIST ToHandShakeConnections;
+
+        // To be accepted Connections
+        QUIC_CONNECTION_LINKED_LIST ToAcceptConnections;
+
+        //Established Connection 
+        QUIC_CONNECTION_LINKED_LIST EstablishedConnections; // List of all the connections
+        
+        // Connection ID Manager for
         connectionIDManager connectionIDs; // Connection ID Manager
 
         // Packets to be sent
         PACKET_LINKEDLIST packetsToSend; // Packets to be sent to the [repective] client
 
         // Deamon Threads
-        pthread_t ListenerThread;
+        pthread_t ListenerThread; // takes in Packets
+        pthread_t ConnectionRequestProcessingThread;
+        pthread_t HandShakeProcessingThread;
+        pthread_t EstablishedConnectionManagerThread;
         pthread_t SenderThread;
-        
 
         /*
         Remark when you get a dataout of packetlists, it only deletes the node and not the data's memory | you need to explicitly delete the data using deconstructor
@@ -62,8 +72,10 @@ class quicServer{
             // server_port = PORT;
             // server_ip = SERVER_IP;
             connectionIDs = connectionIDManager();
-            ConnectionsList = QUIC_CONNECTION_LINKED_LIST();
             ConnectionRequestPackets = PACKET_LINKEDLIST();
+            ToHandShakeConnections = QUIC_CONNECTION_LINKED_LIST();
+            ToAcceptConnections = QUIC_CONNECTION_LINKED_LIST();
+            EstablishedConnections = QUIC_CONNECTION_LINKED_LIST();
             packetsToSend = PACKET_LINKEDLIST();
 
 
@@ -75,8 +87,11 @@ class quicServer{
         }
 
 
-        int OpenListener(const struct sockaddr *addr, socklen_t addrlen){
+        int OpenListener(char* port){
             isListernerOpen = true;
+
+            
+
 
             // Creating socket file descriptor
             if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
@@ -86,13 +101,28 @@ class quicServer{
                 return;
             }
 
+            struct addrinfo hints, *res;
+            memset(&hints, 0, sizeof hints);
+            hints.ai_family = AF_INET; // IPv4
+            hints.ai_socktype = SOCK_DGRAM; // UDP
+            hints.ai_flags = AI_PASSIVE; // use my IP
+            
+
+            int s = getaddrinfo(NULL, port, &hints, &res);
+
             // Bind the socket with the server address
-            if (bind(sockfd, addr, addrlen) < 0)
-            {
+            if(bind(sockfd, res->ai_addr, res->ai_addrlen) < 0){
                 status = SERVER_LISTENER_OPEN_FAILED;
-                errorLog = "UDP Bind failed";
-                return -1;
+                errorLog = "UDP Socket bind failed";
+                return;
             }
+
+            // set the server details
+            server_addr = *(struct sockaddr_in *)res->ai_addr;
+            server_port = atoi(port);
+
+
+
             // the moment server is binded it start listening []
 
 
@@ -125,7 +155,12 @@ class quicServer{
             NewConnectionCallbackHandler = callbackHandler;
         }
 
-        // int acceptConnection() | In NewConnections.hpp
+        quicConnection acceptConnection(){
+            // ----TO DO----
+            // Will move connection ToAcceptConnections to EstablishedConnections
+            // Will return the connection object
+        }
+
 };
 
 

@@ -4,6 +4,8 @@
 #include "includes.hpp"
 
 // Packet Processing Functions Declarations
+int packetProcessing(quicConnection *connection, packet *packetData); // generic function to process any packet
+
 
 int processInitialPacket(quicConnection *connection, packet *packetData);
 packet *generateInitialPacket(quicConnection *connection);
@@ -56,6 +58,24 @@ int processInitialPacket(quicConnection *connection, packet *packetData)
 
     // We need to Extract Payload and Frames and process each frame
     // -------TODO Code Frame Processing Units
+
+
+
+    // --After Processing State Update of Connection must be handled by the Frame Handler or If needed by This function
+        // Add Connection to ToHandShakeConnections
+        // Add It's Connection ID to ConnectionIDManager
+        // Update Connection State to HandShake
+
+    // -- Then we need to send ACK Frame in the ToSendQueue of this Connection
 }
+
+
+
+
+int packetProcessing(quicConnection *connection, packet *packetData)
+{
+    // Will will outsource each packet to it's respective handlers
+}
+
 
 #endif // PACKETPROCESSING_HPP

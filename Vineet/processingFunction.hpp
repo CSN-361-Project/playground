@@ -4,15 +4,15 @@
 #include "includes.hpp"
 
 // Declarations ----------------------------
-varInt variablelenghtDecode(char *data, const int start);
-
+u_int64_t variablelenghtDecode(char *data, const int start);
+u_int64_t readByte8(char *data, const int start, int noOfBytes);
 
 
 
 
 
 // Implementations ----------------------------
-varInt variablelenghtDecode(char *data, const int start){
+u_int64_t variablelenghtDecode(char *data, const int start){
     varInt number = 0;
     int i = start;
     int MSB = data[i] & 0xC0; // two most significant bits
@@ -40,7 +40,7 @@ varInt variablelenghtDecode(char *data, const int start){
     return number;
 }
 
-Byte8 readByte8(char *data, const int start, int noOfBytes){
+u_int64_t readByte8(char *data, const int start, int noOfBytes){
     Byte8 number = 0;
     int i = start;
     for (int j = 0; j < noOfBytes; j++)

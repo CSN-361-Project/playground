@@ -3,31 +3,33 @@
 
 #include "includes.hpp"
 
-quicConnection quicServer::acceptConnection(){
-    /* This function will be called by the user in the callback handler
-    - will return a connection object, which the callback handler can work with
+void* ConnectionRequestProcessing(void* arg){
+    quicServer* server = (quicServer*)arg;
 
-    */
+    while(1){
 
-    // This function will extract one packet from the newConnectionPackets list and create a new connection object
+        packet* RequestPacket = server->ConnectionRequestPackets.extractHead();
 
-    packet* RequestPacket = ConnectionRequestPackets.extractHead();
-    if(RequestPacket == NULL){
-        // No new connection request
-        return; 
+        if(RequestPacket == NULL){
+            // No new connection request
+            continue;
+        }
+
+        quicConnection newConnection = quicConnection();
+        
+
+        // will send this to InitialPacketProcessing Thread
+        int check = processInitialPacket(&newConnection, RequestPacket);
+        // Will handle all the stuff by this function
+
+
+        if(check == -1){
+            // Error in processing the packet
+            continue;
+        }
     }
 
-    quicConnection newConnection = quicConnection(RequestPacket);
 }
-
-
-
-
-
-
-
-
-
 
 
 

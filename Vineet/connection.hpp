@@ -10,6 +10,7 @@ class quicConnectionNode;
 // const quicConnection FAILED_CONNECTION = quicConnection();
 
 
+
 class quicConnection
 {
     // This is a class that will be used to handle the connection between the server and the client
@@ -23,23 +24,31 @@ public:
     PACKET_LINKEDLIST RecievedPackets;
     PACKET_LINKEDLIST SendPackets;
 
+    // FRAMES
+    FRAME_LINKED_LIST ToSendFrames;
+
     // peer details [-- will be using for sending packets back to the peer]
     SocketAddress peerAddress;
+    PeerConnectionIDManager peerConnectionIDs;
 
     // Member Function Declarations ----------------
-    quicConnection(packet* InitialPacket);
-
-
+    quicConnection();
+    Stream openNewStream();
+    // Sending and Recieving and closing data is handled by streams
+    int closeConnection();
 
     // Member Function Implementations ----------------
-    quicConnection(packet* InitialPacket)
-    {
-        // Extract the peer address from the packet
-        peerAddress = InitialPacket->peerAddress;
-        
-        // Then we need to process the Initial Packet
-        int check = processInitialPacket(this,InitialPacket);
+    quicConnection(){
+        // Initialising the connection
+        status = CONNECTION_REQUESTED;
+        SendPackets = PACKET_LINKEDLIST();
+        RecievedPackets = PACKET_LINKEDLIST();
+        ToSendFrames = FRAME_LINKED_LIST();
+        peerAddress = SocketAddress();
+        peerConnectionIDs = PeerConnectionIDManager();
+
     }
+
 };
 
 // Linked List for Connections
@@ -77,8 +86,12 @@ public:
     void addConnectionAtHead(quicConnection *connection);
     int removeNode(quicConnectionNode *current);      // To remove the node from the list
     int removeConnection(quicConnection *connection); // To remove the connection from the list
+    quicConnection *peekHead();
+    quicConnection *extractHead();
+    quicConnection *peekTail();
+    quicConnection *extractTail();
 
-    // No need for functions to access for head and tails
+
 
     // Member Function Implementations ----------------
     void addConnection(quicConnection *connection)
@@ -154,6 +167,49 @@ public:
         quicConnectionNode *current = connection->selfNode;
         return removeNode(current);
     }
+
+    quicConnection *peekHead()
+    {
+        if (head == NULL)
+        {
+            return NULL;
+        }
+        return head->connection;
+    }
+
+    quicConnection *extractHead()
+    {
+        if (head == NULL)
+        {
+            return NULL;
+        }
+        quicConnection *connection = head->connection;
+        removeNode(head);
+        return connection;
+    }
+
+    quicConnection *peekTail()
+    {
+        if (tail == NULL)
+        {
+            return NULL;
+        }
+        return tail->connection;
+    }
+
+    quicConnection *extractTail()
+    {
+        if (tail == NULL)
+        {
+            return NULL;
+        }
+        quicConnection *connection = tail->connection;
+        removeNode(tail);
+        return connection;
+    }
+
+    
+
 
     ~QUIC_CONNECTION_LINKED_LIST()
     {

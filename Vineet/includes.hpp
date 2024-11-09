@@ -5,6 +5,8 @@
     #include <iostream>
     #include <vector>
     #include <string>
+    #include <set>
+    #include <random>
     #include <fstream>
     #include <sstream>
     #include <algorithm>
@@ -19,11 +21,18 @@
     #include <fcntl.h>
     #include <sys/ioctl.h>
     #include <net/if.h>
+    #include <sys/types.h>
+    #include <sys/socket.h>
+    #include <netdb.h>
+    #include <unistd.h>
+    #include <arpa/inet.h>
+    #include <pthread.h>
+    #include <cstring>
 
 // API Libraries
     #include "packet.hpp"
     #include "frame.hpp"
-    #include "packet.hpp"
+    #include "stream.hpp"
     #include "quicServer.hpp"
     #include "quicClient.hpp"
     #include "connection.hpp"
@@ -57,12 +66,14 @@
     using Byte1 = unsigned char;
     using index = unsigned int;
     using length = unsigned long long;
+    using frameType = unsigned char;
 
-    // Global Constants
+// Global Constants
     int MAX_CONNECTION_ID_SIZE = 8; // 8 bytes = 64 bits
     int MAXLINE = 1024; // 1 KB
+    char *SERVER_PORT = "12345";
 
-// Global variable 
+    // Global variable 
     int byteSizeOfConnectionID = 2; // will be re-set by serverCreationConstructor
 
 
@@ -73,6 +84,10 @@
 
     const std::string HANDSHAKE_MESSAGE = "Hello from client";
     const std::string HANDSHAKE_RESPONSE = "Hello from server";
+
+    // Reserved Connection IDs [ids 0-9 will be reserved]
+    const CONNECTION_ID INITIAL_SERVER_CONNECTION_ID = 0;
+    const CONNECTION_ID NO_PEERS_CONNECTIONID_AVAILABLE = 3;
 
     // Make sure to not use anysame interger for status codes
     const STATUS_CODE CLIENT_SOCKET_CREATION_INITIATED = 1;
@@ -89,6 +104,14 @@
     const STATUS_CODE SERVER_LISTENER_READY = 7;
     const STATUS_CODE SERVER_LISTENING = 8;
 
+    const STATUS_CODE CONNECTION_REQUESTED = 10;
+    const STATUS_CODE PRE_HANDSHAKE = 9;
+    const STATUS_CODE HANDSHAKE_INITIATED = 11;
+    const STATUS_CODE HANDSHAKE_SUCCESS = 12;
+    const STATUS_CODE HANDSHAKE_FAILED = -5;
+    const STATUS_CODE CONNECTION_ESTABLISHED = 13;
+    // Can be more status of connection
 
+    const STATUS_CODE CONNECTION_CLOSED = 14;
 
 #endif // INCLUDES_HPP

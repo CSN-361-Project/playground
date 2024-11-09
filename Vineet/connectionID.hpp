@@ -13,8 +13,6 @@ using ordered_set = __gnu_pbds::tree<
     __gnu_pbds::rb_tree_tag,
     __gnu_pbds::tree_order_statistics_node_update>;
 
-using CONNECTION_ID = unsigned long long;
-
 std::mt19937_64 randomNumberGenerator(std::chrono::steady_clock::now().time_since_epoch().count());
 
 class connectionIDManager
@@ -23,7 +21,7 @@ class connectionIDManager
     int byteSizeOfConnectionID;
     ordered_set<unsigned long long> usedID;
     std::map<CONNECTION_ID, quicConnection *> connectionIDMap;
-    std::map<quicConnection *, std::set<CONNECTION_ID>> connectionMap;
+    std::map<quicConnection *, std::set<CONNECTION_ID> > connectionMap;
 
     public:
     // Member Function Declarations ----------------
@@ -52,7 +50,7 @@ class connectionIDManager
         while (low <= high)
         {
             unsigned long long mid = low + (high - low) / 2;
-            unsigned long long missedTillNow = *s.find_by_order(mid) - mid;
+            unsigned long long missedTillNow = *usedID.find_by_order(mid) - mid;
             if (missedTillNow < indexOfNewID)
                 lowerIndex = mid, low = mid + 1;
             else
@@ -116,6 +114,81 @@ class connectionIDManager
     {
         return connectionIDMap[connectionID];
     }
+};
+
+class PeerConnectionIDManager
+{
+    // Data Members ----------------
+    int sizeofPeerConnectionID;
+    std::set<CONNECTION_ID> usedID;
+    public:
+    // Member Function Declarations ----------------
+    PeerConnectionIDManager(); // set 0-8
+    int setSizeOfPeerConnectionID(int sizeofPeerConnectionID);
+    int addConnectionID(CONNECTION_ID peerID);
+    int retireConnectionID(CONNECTION_ID peerConnectionID);
+    int getSizeOfPeerConnectionID();
+    int retireAllConnectionID();
+    CONNECTION_ID getRandomConnectionID();
+
+
+    // Member Function Implementations ----------------
+    PeerConnectionIDManager()
+    {
+        sizeofPeerConnectionID = 2;
+    }
+
+    int setSizeOfPeerConnectionID(int sizeofPeerConnectionID)
+    {
+        this->sizeofPeerConnectionID = sizeofPeerConnectionID;
+    }
+
+    int addConnectionID(CONNECTION_ID peerID)
+    {
+        if (usedID.count(peerID))
+        {
+            return -1;
+        }
+        usedID.insert(peerID);
+        return 0;
+    }
+
+    int retireConnectionID(CONNECTION_ID peerConnectionID)
+    {
+        if (!usedID.count(peerConnectionID))
+        {
+            return -1;
+        }
+        usedID.erase(peerConnectionID);
+        return 0;
+    }
+
+    int getSizeOfPeerConnectionID()
+    {
+        return sizeofPeerConnectionID;
+    }
+
+    int retireAllConnectionID()
+    {
+        usedID.clear();
+        return 0;
+    }
+
+    CONNECTION_ID getRandomConnectionID()
+    {
+        // get any connection ID from the set
+        int size = usedID.size();
+        if (size == 0)
+        {
+            return NO_PEERS_CONNECTIONID_AVAILABLE;
+        }
+        std::uniform_int_distribution<int> dist(0, size - 1);
+        int index = dist(randomNumberGenerator);
+        auto it = usedID.begin();
+        std::advance(it, index);
+        return *it;
+    }
+
 };
 
 #endif // CONNECTIONID_HPP
