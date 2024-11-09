@@ -38,7 +38,12 @@ void *connectionThread(void *arg){
         // Also Run the PeerCreatedStreamHandler
         if(connection->streams.hasPeerCreatedStreams){
             // Run the callbackHandler for each stream
-            
+            while(!connection->streams.peerCreatedStreams.empty()){
+                quicStream stream = connection->streams.peerCreatedStreams.front();
+                connection->NewStreamCallbackHandler(&stream);
+                connection->streams.peerCreatedStreams.pop();
+            }
+            connection->streams.hasPeerCreatedStreams = false;
         }
     }
 }
