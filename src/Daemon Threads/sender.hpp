@@ -1,15 +1,13 @@
-#ifndef RECIEVER_HPP
-#define RECIEVER_HPP
+#ifndef SENDER_HPP
+#define SENDER_HPP
 
-#include "includes.hpp"
-
-// Declarations ----------------------------
-void* RecieverThread(void* arg);
+#include "../includes.hpp"
 
 
+void* SenderThread(void* arg);
 
-// Implementations ----------------------------
-void* RecieverThread(void* arg){
+
+void* SenderThread(void* arg){
     quicServer *server = (quicServer *)arg; // we pass the whole server object over to the thread to have full access to this
 
     while(server->isListernerOpen){
@@ -62,4 +60,8 @@ void* RecieverThread(void* arg){
 
 
 
-#endif // RECIEVER_HPP
+
+
+
+
+#endif // SENDER_HPP

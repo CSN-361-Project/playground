@@ -1,6 +1,7 @@
 #ifndef FRAME_HPP
 #define FRAME_HPP
 
+#include "../includes.hpp"
 
 // Frame Types
 const frameType PADDING = 0x00;

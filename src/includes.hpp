@@ -30,21 +30,23 @@
     #include <cstring>
 
 // API Libraries
-    #include "packet.hpp"
-    #include "frame.hpp"
-    #include "stream.hpp"
-    #include "quicServer.hpp"
-    #include "quicClient.hpp"
-    #include "connection.hpp"
-    #include "connectionID.hpp"
-    #include "linkedList.hpp"
-    #include "reciever.hpp"
-    #include "sender.hpp"
-    #include "connectionNew.hpp"
-    #include "connectionExisting.hpp"
-    #include "processingFunction.hpp"
-    #include "packetProcessing.hpp"
-    #include "frameProcessing.hpp"
+    #include "src/Others/support.hpp"
+    #include "src/Client/quicClient.hpp"
+    #include "src/Server/quicServer.hpp"
+    #include "Support Functions/linkedList.hpp"
+    #include "Support Functions/processingFunction.hpp"
+    #include "Packets/packet.hpp"
+    #include "Frames/frame.hpp"
+    #include "Connections/connection.hpp"
+    #include "Connections/connectionID.hpp"
+    #include "Connections/connectionNew.hpp"
+    #include "Connections/connectionHandshake.hpp"
+    #include "Connections/connectionExisting.hpp"
+    #include "Packets/packetProcessing.hpp"
+    #include "Frames/frameProcessing.hpp"
+    #include "Daemon Threads/reciever.hpp"
+    #include "Daemon Threads/sender.hpp"
+    #include "Streams/stream.hpp"
 
 
 // #defines

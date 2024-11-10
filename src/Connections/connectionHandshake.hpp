@@ -1,7 +1,7 @@
 #ifndef CONNECTION_HANDSHAKE_HPP
 #define CONNECTION_HANDSHAKE_HPP
 
-#include "includes.hpp"
+#include "../includes.hpp"
 
 void *HandshakeProcessing(void *arg)
 {
@@ -17,9 +17,6 @@ void *HandshakeProcessing(void *arg)
             continue;
         }
 
-        // will send this to InitialPacketProcessing Thread
-        connection->beginHandShake();
-        // Will handle all the stuff by this function
     }
 }
 

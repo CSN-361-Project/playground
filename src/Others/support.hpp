@@ -29,10 +29,8 @@
 #include <arpa/inet.h>
 
 
-#include "threads.hpp"
+// #include "threads.hpp"
 #include "roughCode.hpp"
-
-using STREAM_ID = int;
 
 
 #endif // SUPPORT_HPP
