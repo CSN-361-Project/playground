@@ -148,6 +148,8 @@ public:
     u_int8_t whoAmI; // 0 for server, 1 for client
     // Data members
     int connectionfd;
+    pthread_t bakcgroundThread;
+    bool isConnected;
     void (*NewStreamCallbackHandler)(quicStream *stream);
     StreamManager streams;
     // StreamManager
@@ -161,7 +163,9 @@ public:
     // Functions Implementation
     quicConnection(u_int8_t who) : streams(who), whoAmI(who), connectionfd(-1), NewStreamCallbackHandler(NULL)
     {
-        // Just Initialising the connection
+        // Just Initialising the Connection
+        isConnected = true;
+        pthread_create(&bakcgroundThread, NULL, connectionThread, (void *)this);
     }
     void setNewStreamCallbackHandler(void (*callbackHandler)(quicStream *stream))
     {
@@ -171,6 +175,14 @@ public:
     quicStream openNewStream()
     {
         return streams.openNewStream();
+    }
+
+    int closeConnection()
+    {
+        isConnected = false;
+        pthread_join(bakcgroundThread, NULL);
+        close(connectionfd);
+        return 0;
     }
 };
 

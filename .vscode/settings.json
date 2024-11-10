@@ -3,6 +3,9 @@
     "string": "cpp",
     "__tree": "cpp",
     "bitset": "cpp",
-    "set": "cpp"
+    "set": "cpp",
+    "array": "cpp",
+    "string_view": "cpp",
+    "vector": "cpp"
   }
 }

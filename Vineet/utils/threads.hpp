@@ -24,27 +24,31 @@ void *connectionThread(void *arg){
     // This Thread will handle data to send and recieved data
     quicConnection *connection = (quicConnection *)arg;
 
-    while(1){
-
-        // Recieve Data
-        char* data = new char[1024];
-        int length = recv(connection->connectionfd, data, 1024, 0); // recieve data from TCP connection
-
-        ProcessRecievedData(connection, data, length);
-
-        // Check Data to send
+    while(connection->isConnected){
+        // First Check if there is any data to send
         CheckDataToSend(connection);
 
         // Also Run the PeerCreatedStreamHandler
-        if(connection->streams.hasPeerCreatedStreams){
+        if (connection->streams.hasPeerCreatedStreams)
+        {
             // Run the callbackHandler for each stream
-            while(!connection->streams.peerCreatedStreams.empty()){
+            while (!connection->streams.peerCreatedStreams.empty())
+            {
                 quicStream stream = connection->streams.peerCreatedStreams.front();
                 connection->NewStreamCallbackHandler(&stream);
                 connection->streams.peerCreatedStreams.pop();
             }
             connection->streams.hasPeerCreatedStreams = false;
         }
+
+
+        // Recieve Data
+        char* data = new char[1024];
+        int length = recv(connection->connectionfd, data, 1024, 0); // recieve data from TCP connection
+
+        ProcessRecievedData(connection, data, length);
+        
+        sleep(1); // sleep for 1 sec
     }
 }
 
@@ -85,7 +89,9 @@ void CheckDataToSend(quicConnection *connection){
     int bufferlen = 10*1024;
     char* buffer = new char[bufferlen];
     int length = connection->streams.getStreamDataTobeSend(buffer, bufferlen);
-    send(connection->connectionfd, buffer, length, 0);
+    if(length > 0){
+        send(connection->connectionfd, buffer, length, 0);
+    }
 }
 
 
